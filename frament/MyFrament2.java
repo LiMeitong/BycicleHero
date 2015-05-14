@@ -4,6 +4,7 @@ package com.course.byciclehero.frament;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -13,6 +14,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.FindCallback;
 import com.course.byciclehero.AddItem;
 import com.course.byciclehero.DetailAty;
 import com.course.byciclehero.MyListViewAdapter;
@@ -28,7 +33,7 @@ public class MyFrament2 extends Fragment {
 
     private MySellListViewAdapter adapter;
 
-    private List<String> list ;
+    private List<AVObject> list ;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,20 +70,29 @@ public class MyFrament2 extends Fragment {
 
     }
 
-    private List<String> getdata(){
+    private List<AVObject> getdata(){
+
+
         int size = 0;
         if (list != null) {
             size = list.size();
-
         }
         if (list == null) {
-            list = new ArrayList<String>();
-        }
-
-        for (int i = 0; i < 20; i++) {
-            list.add("item" + i + size);
+            list = new ArrayList<AVObject>();
+            AVQuery<AVObject> query = new AVQuery<AVObject>("SellItem");
+            query.findInBackground(new FindCallback<AVObject>() {
+                public void done(List<AVObject> avObjects, AVException e) {
+                    if (e == null) {
+                        list.addAll(avObjects);
+                    } else {
+                        Log.d("失败", "查询错误: " + e.getMessage());
+                    }
+                }
+            });
         }
         return list;
+
+
     }
 
 }
