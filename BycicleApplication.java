@@ -13,4 +13,5 @@ public class BycicleApplication extends Application {
         AVOSCloud.initialize(this, "zvqv3u8irntzvpwxu4x43dlsvsxaweomfr6y6vp4hof4bri8", "05npw6yfgep7una9vhhf0ysuqhch0a10dqr5v8f6x95i5w8q");
         super.onCreate();
     }
+
 }
