@@ -19,6 +19,9 @@ import com.course.byciclehero.R;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * get lost and found page.
+ */
 public class MyFrament1 extends Fragment {
 
     private ListView listView;
@@ -63,6 +66,10 @@ public class MyFrament1 extends Fragment {
 
     }
 
+    /**
+     * get data from leancloud.
+     * @return list of result
+     */
     private List<String> getdata(){
         int size = 0;
         if (list != null) {
