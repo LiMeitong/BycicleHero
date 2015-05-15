@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -66,6 +67,9 @@ public class MyFrament2 extends Fragment {
                 Toast.makeText(getActivity(),"买买买"+i,Toast.LENGTH_SHORT).show();
             }
         });
+
+
+
         return view;
 
     }

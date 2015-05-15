@@ -2,7 +2,9 @@ package com.course.byciclehero.frament;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,7 @@ import com.course.byciclehero.AddItem;
 import com.course.byciclehero.DetailAty;
 import com.course.byciclehero.MyListViewAdapter;
 import com.course.byciclehero.R;
+import com.google.zxing.client.android.ViewfinderView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +30,19 @@ import java.util.List;
 /**
  * get lost and found page.
  */
-public class MyFrament1 extends Fragment {
+public class MyFrament1 extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private ListView listView;
 
     private MyListViewAdapter adapter;
 
     private List<AVObject> list ;
+
+    private SwipeRefreshLayout swipeRefreshLayoutLost;
+
+    private static int pageNum = 0 ;
+    private static int pageSize = 1;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,6 +76,17 @@ public class MyFrament1 extends Fragment {
                 Toast.makeText(getActivity(),"he"+i,Toast.LENGTH_SHORT).show();
             }
         });
+
+
+        /**
+         * set swipe to refresh layout
+         */
+
+        swipeRefreshLayoutLost = (SwipeRefreshLayout) view.findViewById(R.id.swipe_lost_container);
+        swipeRefreshLayoutLost.setOnRefreshListener(this);
+        swipeRefreshLayoutLost.setColorSchemeResources(R.color.titleFocusedColor);
+
+
         return view;
 
     }
@@ -77,29 +97,45 @@ public class MyFrament1 extends Fragment {
      */
     private List<AVObject> getdata(){
 
-
-        int size = 0;
-        if (list != null) {
-            size = list.size();
-        }
         if (list == null) {
             list = new ArrayList<AVObject>();
-            AVQuery<AVObject> query = new AVQuery<AVObject>("LostItem");
+        }
+
+        AVQuery<AVObject> query = new AVQuery<AVObject>("LostItem");
+        query.orderByDescending("createdAt");
+        query.setLimit(pageSize);
+        query.setSkip(pageSize*pageNum);
+
             query.findInBackground(new FindCallback<AVObject>() {
                 public void done(List<AVObject> avObjects, AVException e) {
                     if (e == null) {
-                        list.addAll(avObjects);
+                        if( avObjects.size() == 0 ){
+                            Toast.makeText(getActivity(),"no more",Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            pageNum++;
+                            list.addAll(avObjects);
+                        }
                     } else {
                         Log.d("失败", "查询错误: " + e.getMessage());
                     }
                 }
             });
-        }
+
         return list;
 
 
     }
 
 
-
+    @Override
+    public void onRefresh() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getdata();
+                swipeRefreshLayoutLost.setRefreshing(false);
+            }
+        }, 3000);
+    }
 }
